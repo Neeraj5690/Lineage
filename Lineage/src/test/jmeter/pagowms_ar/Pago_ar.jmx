@@ -1,0 +1,1918 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="VAR_PATH" elementType="Argument">
+            <stringProp name="Argument.name">VAR_PATH</stringProp>
+            <stringProp name="Argument.value">${__BeanShell(import org.apache.jmeter.services.FileServer; FileServer.getFileServer().getBaseDir();)}${__BeanShell(File.separator,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="VAR_SPLIT_PATH" elementType="Argument">
+            <stringProp name="Argument.name">VAR_SPLIT_PATH</stringProp>
+            <stringProp name="Argument.value">${__split(${__BeanShell(import org.apache.jmeter.services.FileServer; FileServer.getFileServer().getBaseDir().replace(File.separator\,&quot;/&quot;);)},VAR_SPLIT_PATH,&quot;/&quot;)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <com.tag.jmeter.ext.config.PropertyReader guiclass="TestBeanGUI" testclass="com.tag.jmeter.ext.config.PropertyReader" testname="Property File Reader" enabled="true">
+        <stringProp name="propFilePath">qa_pagowms_ar.properties</stringProp>
+      </com.tag.jmeter.ext.config.PropertyReader>
+      <hashTree/>
+      <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="JDBC Connection Configuration" enabled="true">
+        <boolProp name="autocommit">true</boolProp>
+        <stringProp name="checkQuery"></stringProp>
+        <stringProp name="connectionAge">5000</stringProp>
+        <stringProp name="connectionProperties"></stringProp>
+        <stringProp name="dataSource">dbConnection</stringProp>
+        <stringProp name="dbUrl">jdbc:postgresql://${__P(db.host,)}:${__P(db.port,)}/${__P(db.name,)}</stringProp>
+        <stringProp name="driver">org.postgresql.Driver</stringProp>
+        <stringProp name="initQuery"></stringProp>
+        <boolProp name="keepAlive">true</boolProp>
+        <stringProp name="password">B4%sQArM324SXt%M!3cb</stringProp>
+        <stringProp name="poolMax">0</stringProp>
+        <boolProp name="preinit">false</boolProp>
+        <stringProp name="timeout">10000</stringProp>
+        <stringProp name="transactionIsolation">DEFAULT</stringProp>
+        <stringProp name="trimInterval">60000</stringProp>
+        <stringProp name="username">${__P(db.user,)}</stringProp>
+      </JDBCDataSource>
+      <hashTree/>
+      <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Check File existence" enabled="true">
+        <stringProp name="scriptLanguage">groovy</stringProp>
+        <stringProp name="parameters"></stringProp>
+        <stringProp name="filename"></stringProp>
+        <stringProp name="cacheKey">true</stringProp>
+        <stringProp name="script">def fileCSV = &quot;${VAR_SPLIT_PATH}/TestData/${__P(file.name,)}${__P(sftp.filetype,)}&quot;
+def testFile = new File(fileCSV)
+if (!testFile.exists()){
+	log.info(&quot;File $fileCSV does not exist.&quot;)
+	PrintWriter pw0;
+	pw0 = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/TestLog&quot;+props.get(&quot;sftp.filetype&quot;)));
+	StringBuffer csvHeader = new StringBuffer(&quot;&quot;);
+	StringBuffer csvData = new StringBuffer(&quot;&quot;);
+
+	csvHeader.append(&quot;Test Log\n&quot;);
+	pw0.write(csvHeader.toString());
+	csvData.append(&quot;${__P(sftp.destination,)}/${__P(sys.name,)}/${__P(env,)}/jmeter/${__P(sys.type,)}/${__P(file.name,)}${__P(sftp.filetype,)} does not exist.&quot;);
+	pw0.write(csvData.toString());
+	pw0.close();
+	System.exit(0);
+}
+  else {
+  	log.info(&quot;File $fileCSV exist.&quot;)
+	PrintWriter pw0;
+	pw0 = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/TestLog&quot;+props.get(&quot;sftp.filetype&quot;)));
+	StringBuffer csvHeader = new StringBuffer(&quot;&quot;);
+	StringBuffer csvData = new StringBuffer(&quot;&quot;);
+
+	csvHeader.append(&quot;Test Log\n&quot;);
+	pw0.write(csvHeader.toString());
+	csvData.append(&quot;${__P(sftp.destination,)}/${__P(sys.name,)}/${__P(env,)}/jmeter/${__P(sys.type,)}/${__P(file.name,)}${__P(sftp.filetype,)} exist.&quot;);
+	pw0.write(csvData.toString());
+	pw0.close();
+  }
+</stringProp>
+      </JSR223PostProcessor>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ThreadGroup" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Check if TEST enabled in properties file" enabled="true">
+          <stringProp name="IfController.condition">${__javaScript(&quot;${__P(test.enabled,)}&quot; == &quot;true&quot;)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+        </IfController>
+        <hashTree>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="File" enabled="false">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">log.info(&quot;---------------------&amp;&amp;&amp;&amp;&amp;-------------------&quot;)
+def jsonSlurper = new groovy.json.JsonSlurper()
+def json = jsonSlurper.parseText(&apos;{&quot;BRANCH&quot;: &quot;master&quot;,&quot;name&quot;: &quot;customer&quot;,&quot;product_name&quot; : &quot;PQ&quot;,&quot;domain&quot; : &quot;Shopping&quot;,&quot;_id&quot;: &quot;12345&quot;, &quot;asdf&quot;:[&quot;asdf&quot;,&quot;asdf&quot;], &quot;obj&quot;:{&quot;a&quot;:&quot;b&quot;, &quot;c&quot;:&quot;d&quot;}}&apos;)
+def result1 = json.collect { new StringBuilder().append(&apos;&quot;&apos;).append(it.key).append(&apos;&quot;&apos;) }.flatten().join(&quot;,&quot;)
+def result = json.collect { new StringBuilder().append(&apos;&quot;&apos;).append(it.value).append(&apos;&quot;&apos;) }.flatten().join(&quot;,&quot;)
+log.info(result1)
+log.info(result)
+log.info(&quot;---------------------&amp;&amp;&amp;&amp;&amp;-------------------&quot;)</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="Unique Invoice number generator" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="invoiceNumber" elementType="Argument">
+                <stringProp name="Argument.name">invoiceNumber</stringProp>
+                <stringProp name="Argument.value">${__time(ddHHmmss)}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </Arguments>
+          <hashTree/>
+          <org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler" testname="SFTP - Fetch Valid File from Mule SFTP" enabled="true">
+            <stringProp name="action">get</stringProp>
+            <intProp name="connectionTimeout">5000</intProp>
+            <stringProp name="destination">${VAR_SPLIT_PATH}/TestData</stringProp>
+            <stringProp name="hostname">${__P(sftp.host,)}</stringProp>
+            <stringProp name="passphrase">AeDOPLSuSK1fBPAlY1KpjfmeUOO88ZG9NOPnUlWHx3C3Z8Hror5GPsdjbzI4OBjy</stringProp>
+            <stringProp name="password"></stringProp>
+            <intProp name="port">22</intProp>
+            <boolProp name="printFile">false</boolProp>
+            <stringProp name="source">${__P(sftp.destination,)}/${__P(sys.name,)}/${__P(env,)}/jmeter/${__P(sys.type,)}/${__P(file.name,)}${__P(sftp.filetype,)}</stringProp>
+            <stringProp name="sshkeyfile">${VAR_PATH}/sftp_login.pem</stringProp>
+            <stringProp name="username">${__P(sftp.user,)}</stringProp>
+          </org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="File Conversion with Valid unique values (Coma Sep)" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import java.io.*;
+import java.io.File;
+import org.apache.jmeter.services.FileServer;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.io.Writer;
+
+log.info(&quot;--------------------Valid File Conversion with unique values---------------------&quot;)
+
+//--------------------Reading Valid SampleFile ----------------------
+String fileContents = new File(&quot;${VAR_SPLIT_PATH}/TestData/${__P(file.name,)}${__P(sftp.filetype,)}&quot;).getText()
+lines = 0 
+def CSVLineData = []
+fileContents.eachLine { line,lineNum -&gt;
+        lines++
+        CSVLineData.add(line)
+    }
+vars.put(&quot;RowCount&quot;, (lines-1).toString())
+vars.put(&quot;System_Name&quot;, &quot;${__P(sys.name,)}&quot;)
+vars.put(&quot;System_Type&quot;, &quot;${__P(sys.type,)}&quot;)
+
+//def ResultMap = new HashMap()
+//ResultMap.put(&quot;System_Name&quot;,&quot;${__P(sys.name,)}&quot;)
+//ResultMap.put(&quot;System_Type&quot;,&quot;${__P(sys.type,)}&quot;)
+//ResultMap.put(&quot;Loading_Header_Scenario&quot;,&quot;Loading_Header_result (Valid File)&quot;)
+
+//-----------Creating Valid File with unique data -----------
+File f=new File(&quot;${VAR_SPLIT_PATH}/TestData/Test_ff&quot;+props.get(&quot;sftp.filetype&quot;));
+FileWriter fw=new FileWriter(f);
+BufferedWriter bw=new BufferedWriter(fw);
+PrintWriter pw = new PrintWriter(bw);
+
+//-----------Initiate Hashmap for unique original Invoice number-----------
+def InvoiceMap = new HashMap()
+
+//-----------Converting file with unique values as per the unique column-----------
+def UniqueColumns = props.get(&quot;unique.columns&quot;)
+String[] UC1 = UniqueColumns.split(&quot;[,]&quot;)
+List&lt;String&gt; UC2 = Arrays.asList(UC1)
+ArrayList&lt;String&gt; UC3 = new ArrayList&lt;String&gt;(UC2)
+for (UCi=0; UCi&lt;UC3.size(); UCi++)
+{
+	def UC_Value=UC3[UCi]
+	def DataByLine =[]
+	def TotalColumnsData = 0
+	def colNum = 1000000
+	for (i2=0; i2&lt;lines; i2++)
+		{	
+			DataByLine.add(CSVLineData.get(i2))
+			String[] elements = DataByLine.get(i2).split(&quot;;&quot;);
+			for (a=0; a&lt;elements.size(); a++)
+			{	
+				if (elements[a].equals(&apos;&quot;&apos;+UC_Value+&apos;&quot;&apos;)){
+					colNum = a
+					pw.append(elements[a]);
+					pw.append(&quot;,&quot;);
+				}
+				else if (a==colNum){
+					str = elements[a].replaceAll(&quot;\&quot;&quot;, &quot;&quot;);								
+					def ItemformatNew=str+${__time(ddHHmmss)}+UCi.toString()
+					ItemformatNew = &apos;&quot;&apos;+ItemformatNew+&apos;&quot;&apos;					
+					log.info(&quot;Line item value [ &quot;+elements[a]+&quot; ] converted to unique format [ &quot;+ItemformatNew+&quot; ]&quot;)
+					pw.append(ItemformatNew);
+					pw.append(&quot;,&quot;);
+					InvoiceMap.put(elements[a],ItemformatNew)	
+				}
+				else{
+					pw.append(elements[a]);
+					pw.append(&quot;,&quot;);
+				}
+				
+			}
+			pw.append(&quot;\n&quot;);
+		}
+}
+bw.close();
+pw.close();
+fw.close();
+
+//log.info(vars.get(&quot;RowCount&quot;).toString())
+//log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+//-------Count of unique Invoice rows in the sample file-------
+vars.put(&quot;InvoiceCount&quot;, InvoiceMap.size().toString())
+
+//-------Storing Invoice map to global variable-------
+props.put(&quot;InvoiceMap1&quot;, InvoiceMap)
+log.info(&quot;------------------------------------------------------------------------&quot;)
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Creating File for Valid unique values (Delimeter based)" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">log.info(&quot;--------------------Creating File for Valid unique values ---------------------&quot;)
+
+if (props.get(&quot;delimeter.type&quot;).equals(&quot;;&quot;)){
+	log.info(&quot;delimeter.type is semicolon&quot;)
+String fileContents = new File(&quot;${VAR_SPLIT_PATH}/TestData/Test_ff&quot;+props.get(&quot;sftp.filetype&quot;)).getText()
+lines = 0
+def CSVLineData = []
+fileContents.eachLine { line,lineNum -&gt;
+        lines++
+        CSVLineData.add(line)
+    }
+log.info(vars.get(&quot;RowCount&quot;).toString())
+//log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+File f=new File(&quot;${VAR_SPLIT_PATH}/TestData/${__P(file.type,)}${__P(sftp.filetype,)}&quot;);
+FileWriter fw=new FileWriter(f);
+BufferedWriter bw=new BufferedWriter(fw);
+PrintWriter pw = new PrintWriter(bw);
+
+def UniqueColumns = props.get(&quot;unique.columns&quot;)
+String[] UC1 = UniqueColumns.split(&quot;[,]&quot;)
+List&lt;String&gt; UC2 = Arrays.asList(UC1)
+ArrayList&lt;String&gt; UC3 = new ArrayList&lt;String&gt;(UC2)
+for (UCi=0; UCi&lt;UC3.size(); UCi++)
+{
+	def UC_Value=UC3[UCi]
+	def DataByLine =[]
+	def TotalColumnsData = 0
+	def colNum = 1000000
+	for (i2=0; i2&lt;lines; i2++)
+		{	
+			DataByLine.add(CSVLineData.get(i2))
+			String[] elements = DataByLine.get(i2).split(&quot;,&quot;);
+			for (a=0; a&lt;elements.size(); a++)
+			{	
+				pw.append(elements[a]);
+				pw.append(&quot;;&quot;);				
+			}
+			pw.append(&quot;\n&quot;);
+		}
+}
+bw.close();
+pw.close();
+fw.close();
+log.info(&quot;------------------------------------------------------------------------&quot;)	
+}
+else if(props.get(&quot;delimeter.type&quot;).equals(&quot;,&quot;)){
+	log.info(&quot;delimeter type is coma&quot;)
+	def file = new File(&quot;${VAR_SPLIT_PATH}/TestData/Test_ff&quot;+props.get(&quot;sftp.filetype&quot;))
+	def string = &quot;${VAR_SPLIT_PATH}/TestData/${__P(file.type,)}${__P(sftp.filetype,)}&quot;
+	file.renameTo(string)	
+}
+log.info(&quot;------------------------------------------------------------------------&quot;)</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="File Conversion with Invalid data (Coma Sep)" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">log.info(&quot;--------------------File Conversion with Invalid Data---------------------&quot;)
+
+String fileContents = new File(&quot;${VAR_SPLIT_PATH}/TestData/${__P(file.name,)}${__P(sftp.filetype,)}&quot;).getText()
+lines = 0
+def CSVLineData = []
+fileContents.eachLine { line,lineNum -&gt;
+        lines++
+        CSVLineData.add(line)
+    } 
+//log.info(vars.get(&quot;RowCount&quot;).toString())
+//log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+ 
+File f1=new File(&quot;${VAR_SPLIT_PATH}/TestData/Test_ff1&quot;+props.get(&quot;sftp.filetype&quot;));
+FileWriter fw1=new FileWriter(f1);
+BufferedWriter bw1=new BufferedWriter(fw1);
+PrintWriter pw1 = new PrintWriter(bw1);
+
+def UniqueColumns = props.get(&quot;unique.columns&quot;)
+String[] UC1 = UniqueColumns.split(&quot;[,]&quot;)
+List&lt;String&gt; UC2 = Arrays.asList(UC1)
+ArrayList&lt;String&gt; UC3 = new ArrayList&lt;String&gt;(UC2)
+for (UCi=0; UCi&lt;UC3.size(); UCi++)
+{
+	def UC_Value=UC3[UCi]
+	def DataByLine =[]
+	def TotalColumnsData = 0
+	def colNum = 1000000
+	for (i2=0; i2&lt;lines; i2++)
+		{	
+			DataByLine.add(CSVLineData.get(i2))
+			String[] elements = DataByLine.get(i2).split(&quot;;&quot;);
+			for (a=0; a&lt;elements.size(); a++)
+			{	
+				if (elements[a].equals(&apos;&quot;&apos;+UC_Value+&apos;&quot;&apos;)){
+					colNum = a
+					pw1.append(elements[a]);
+					pw1.append(&quot;,&quot;);
+				}
+				else if (a==colNum){
+					str = elements[a].replaceAll(&quot;\&quot;&quot;, &quot;&quot;);	
+					def Itemformat = props.get(&quot;Item.Invalidformat&quot;)							
+					def ItemformatNew=str+Itemformat
+					ItemformatNew = &apos;&quot;&apos;+ItemformatNew+&apos;&quot;&apos;					
+					//log.info(&quot;Line item value [ &quot;+elements[a]+&quot; ] converted to unique format [ &quot;+ItemformatNew+&quot; ]&quot;)
+					pw1.append(ItemformatNew);
+					pw1.append(&quot;,&quot;);	
+				}
+				else{
+					pw1.append(elements[a]);
+					pw1.append(&quot;,&quot;);
+				}
+			}
+			pw1.append(&quot;\n&quot;);
+		}
+}
+bw1.close();
+pw1.close();
+fw1.close();
+log.info(&quot;------------------------------------------------------------------------&quot;)
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Creating Invalid Data File (Delimeter based)" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import java.io.File;
+import java.io.FileWriter;
+log.info(&quot;--------------------Creating File for Invalid unique values---------------------&quot;)
+
+if (props.get(&quot;delimeter.type&quot;).equals(&quot;;&quot;)){
+log.info(&quot;delimeter type is semicolon&quot;)
+String fileContents = new File(&quot;${VAR_SPLIT_PATH}/TestData/Test_ff1&quot;+props.get(&quot;sftp.filetype&quot;)).getText()
+lines = 0
+def CSVLineData = []
+fileContents.eachLine { line,lineNum -&gt;
+        lines++
+        CSVLineData.add(line)
+    }
+//log.info(vars.get(&quot;RowCount&quot;).toString())
+//log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+File f1=new File(&quot;${VAR_SPLIT_PATH}/TestData/${__P(Invalidfile.type,)}${__P(sftp.filetype,)}&quot;);
+FileWriter fw1=new FileWriter(f1);
+BufferedWriter bw1=new BufferedWriter(fw1);
+PrintWriter pw1 = new PrintWriter(bw1);
+
+def UniqueColumns = props.get(&quot;unique.columns&quot;)
+String[] UC1 = UniqueColumns.split(&quot;[,]&quot;)
+List&lt;String&gt; UC2 = Arrays.asList(UC1)
+ArrayList&lt;String&gt; UC3 = new ArrayList&lt;String&gt;(UC2)
+for (UCi=0; UCi&lt;UC3.size(); UCi++)
+{
+	def UC_Value=UC3[UCi]
+	def DataByLine =[]
+	def TotalColumnsData = 0
+	def colNum = 1000000
+	for (i2=0; i2&lt;lines; i2++)
+		{	
+			DataByLine.add(CSVLineData.get(i2))
+			String[] elements = DataByLine.get(i2).split(&quot;,&quot;);
+			//log.info(elements.size().toString())
+			for (a=0; a&lt;elements.size(); a++)
+			{	
+				pw1.append(elements[a]);
+				pw1.append(&quot;;&quot;);				
+			}
+			pw1.append(&quot;\n&quot;);
+		}
+}
+bw1.close();
+pw1.close();
+fw1.close();
+}
+else if(props.get(&quot;delimeter.type&quot;).equals(&quot;,&quot;)){
+	log.info(&quot;delimeter type is coma&quot;)
+	def file = new File(&quot;${VAR_SPLIT_PATH}/TestData/Test_ff1&quot;+props.get(&quot;sftp.filetype&quot;))
+	def string = &quot;${VAR_SPLIT_PATH}/TestData/${__P(Invalidfile.type,)}${__P(sftp.filetype,)}&quot;
+	file.renameTo(string)
+}
+log.info(&quot;------------------------------------------------------------------------&quot;)</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Valid File Conversion to unique Name" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.io.FileType
+log.info(&quot;==========================Valid File Conversion to unique Name==============================&quot;)
+def Dir = new File(&quot;${VAR_SPLIT_PATH}/TestData&quot;)
+Dir.traverse { File file_check -&gt;
+  if (file_check.name.contains(&apos;Valid_File&apos;)) {
+	
+	String[] file_N = file_check.name.split(&quot;[.]&quot;)
+	List&lt;String&gt; file_NList = Arrays.asList(file_N)
+	ArrayList&lt;String&gt; file_NArrayList = new ArrayList&lt;String&gt;(file_NList)
+	def file_N1=file_NArrayList[0]
+	vars.put(&quot;file_var&quot;, file_N1)	
+	def fileName = props.get(&quot;sftp.filename&quot;)
+	//log.info(&quot;File name is &quot;+fileName)
+
+	def transmission_id_string = fileName+&quot;_&quot;+&quot;${invoiceNumber}&quot;+&quot;1_JMETER&quot;
+	vars.put(&quot;transmission_id1&quot;, transmission_id_string)
+	//log.info(&quot;transmission_id1 var is &quot;+ vars.get(&quot;transmission_id1&quot;))
+	
+	String SampleFile =&quot;${VAR_SPLIT_PATH}/TestData/&quot;+file_N1+props.get(&quot;sftp.filetype&quot;)
+	log.info(&quot;SampleFile string is &quot;+SampleFile)
+	def file = new File(SampleFile)
+		
+	def SFTPFileName = fileName+&quot;_&quot;+&quot;${invoiceNumber}&quot;+&quot;1_JMETER&quot;+props.get(&quot;sftp.filetype&quot;)
+	//log.info(&quot;SFTP File Name is &quot;+SFTPFileName)
+
+	def SFTPFileReplace = &quot;${VAR_SPLIT_PATH}/TestData/&quot;+fileName+&quot;_&quot;+&quot;${invoiceNumber}&quot;+&quot;1_JMETER&quot;+props.get(&quot;sftp.filetype&quot;)
+	//log.info(&quot;SFTP File Replace is &quot;+SFTPFileReplace)
+	
+	vars.put(&quot;SFTPFileReplaceVar1&quot;, SFTPFileReplace)
+	//log.info(&quot;SFTPFileReplaceVar1 is &quot;+ vars.get(&quot;SFTPFileReplaceVar1&quot;))
+	file.renameTo(SFTPFileReplace)	
+  }
+  else{
+  	//log.info(&quot;Data File is missing&quot;)  	
+  	 }
+}
+	</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Invalid File Conversion to unique Name" enabled="true">
+            <stringProp name="scriptLanguage">groovy</stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="script">import groovy.io.FileType
+log.info(&quot;=========================Invalid File Conversion to unique Name==============================&quot;)
+def Dir = new File(&quot;${VAR_SPLIT_PATH}/TestData&quot;)
+Dir.traverse { File file_check -&gt;
+  if (file_check.name.contains(&apos;Invalid_File&apos;)) {
+	
+	String[] file_N = file_check.name.split(&quot;[.]&quot;)
+	List&lt;String&gt; file_NList = Arrays.asList(file_N)
+	ArrayList&lt;String&gt; file_NArrayList = new ArrayList&lt;String&gt;(file_NList)
+	def file_N1=file_NArrayList[0]
+	vars.put(&quot;file_var&quot;, file_N1)	
+	def fileName = props.get(&quot;sftp.filename&quot;)
+	//log.info(&quot;File name is &quot;+fileName)
+
+	def transmission_id_string = fileName+&quot;_&quot;+&quot;${invoiceNumber}&quot;+&quot;2_JMETER&quot;
+	vars.put(&quot;transmission_id2&quot;, transmission_id_string)
+	//log.info(&quot;transmission_id2 var is &quot;+ vars.get(&quot;transmission_id2&quot;))
+	
+	String SampleFile =&quot;${VAR_SPLIT_PATH}/TestData/&quot;+file_N1+props.get(&quot;sftp.filetype&quot;)
+	//log.info(&quot;SampleFile string is &quot;+SampleFile)
+	def file = new File(SampleFile)
+		
+	def SFTPFileName = fileName+&quot;_&quot;+&quot;${invoiceNumber}&quot;+&quot;2_JMETER&quot;+props.get(&quot;sftp.filetype&quot;)
+	//log.info(&quot;SFTP File Name is &quot;+SFTPFileName)
+
+	def SFTPFileReplace = &quot;${VAR_SPLIT_PATH}/TestData/&quot;+fileName+&quot;_&quot;+&quot;${invoiceNumber}&quot;+&quot;2_JMETER&quot;+props.get(&quot;sftp.filetype&quot;)
+	//log.info(&quot;SFTP File Replace is &quot;+SFTPFileReplace)
+	
+	vars.put(&quot;SFTPFileReplaceVar2&quot;, SFTPFileReplace)
+	//log.info(&quot;SFTPFileReplaceVar2 is &quot;+ vars.get(&quot;SFTPFileReplaceVar2&quot;))
+	file.renameTo(SFTPFileReplace)	
+  }
+  else{
+  	//log.info(&quot;Data File is missing&quot;)	 	
+  	 }
+}
+</stringProp>
+          </JSR223PostProcessor>
+          <hashTree/>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Data Files PUT to SFTP is True" enabled="true">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${__P(sftp.put,)}&quot; == &quot;true&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+          </IfController>
+          <hashTree>
+            <org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler" testname="SFTP - Put Valid File to Mule SFTP" enabled="true">
+              <stringProp name="action">put</stringProp>
+              <intProp name="connectionTimeout">5000</intProp>
+              <stringProp name="destination">${__P(sftp.destination,)}/${__P(sys.name,)}/${__P(env,)}/${__P(sys.type,)}</stringProp>
+              <stringProp name="hostname">${__P(sftp.host,)}</stringProp>
+              <stringProp name="passphrase">AeDOPLSuSK1fBPAlY1KpjfmeUOO88ZG9NOPnUlWHx3C3Z8Hror5GPsdjbzI4OBjy</stringProp>
+              <stringProp name="password"></stringProp>
+              <intProp name="port">22</intProp>
+              <boolProp name="printFile">false</boolProp>
+              <stringProp name="source">${SFTPFileReplaceVar1}</stringProp>
+              <stringProp name="sshkeyfile">${VAR_PATH}/sftp_login.pem</stringProp>
+              <stringProp name="username">${__P(sftp.user,)}</stringProp>
+            </org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler>
+            <hashTree/>
+            <org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler" testname="SFTP - Put Invalid File to Mule SFTP" enabled="true">
+              <stringProp name="action">put</stringProp>
+              <intProp name="connectionTimeout">5000</intProp>
+              <stringProp name="destination">${__P(sftp.destination,)}/${__P(sys.name,)}/${__P(env,)}/${__P(sys.type,)}</stringProp>
+              <stringProp name="hostname">${__P(sftp.host,)}</stringProp>
+              <stringProp name="passphrase">AeDOPLSuSK1fBPAlY1KpjfmeUOO88ZG9NOPnUlWHx3C3Z8Hror5GPsdjbzI4OBjy</stringProp>
+              <stringProp name="password"></stringProp>
+              <intProp name="port">22</intProp>
+              <boolProp name="printFile">false</boolProp>
+              <stringProp name="source">${SFTPFileReplaceVar2}</stringProp>
+              <stringProp name="sshkeyfile">${VAR_PATH}/sftp_login.pem</stringProp>
+              <stringProp name="username">${__P(sftp.user,)}</stringProp>
+            </org.apache.jmeter.protocol.ssh.sampler.SSHSFTPSampler>
+            <hashTree/>
+            <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+              <boolProp name="ResultCollector.error_logging">false</boolProp>
+              <objProp>
+                <name>saveConfig</name>
+                <value class="SampleSaveConfiguration">
+                  <time>true</time>
+                  <latency>true</latency>
+                  <timestamp>true</timestamp>
+                  <success>true</success>
+                  <label>true</label>
+                  <code>true</code>
+                  <message>true</message>
+                  <threadName>true</threadName>
+                  <dataType>true</dataType>
+                  <encoding>false</encoding>
+                  <assertions>true</assertions>
+                  <subresults>true</subresults>
+                  <responseData>false</responseData>
+                  <samplerData>false</samplerData>
+                  <xml>false</xml>
+                  <fieldNames>true</fieldNames>
+                  <responseHeaders>false</responseHeaders>
+                  <requestHeaders>false</requestHeaders>
+                  <responseDataOnError>false</responseDataOnError>
+                  <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                  <assertionsResultsToSave>0</assertionsResultsToSave>
+                  <bytes>true</bytes>
+                  <sentBytes>true</sentBytes>
+                  <url>true</url>
+                  <threadCounts>true</threadCounts>
+                  <idleTime>true</idleTime>
+                  <connectTime>true</connectTime>
+                </value>
+              </objProp>
+              <stringProp name="filename"></stringProp>
+            </ResultCollector>
+            <hashTree/>
+          </hashTree>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="if Database Connection is True" enabled="true">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${__P(db.connection,)}&quot; == &quot;true&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+          </IfController>
+          <hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Loading Controller" enabled="true"/>
+            <hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If headerLoadingTableCheck is True" enabled="true">
+                <stringProp name="IfController.condition">${__javaScript(&quot;${__P(Loading_header.connection,)}&quot; == &quot;true&quot;)}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+              </IfController>
+              <hashTree>
+                <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Loading timer" enabled="true">
+                  <stringProp name="ConstantTimer.delay">${__P(jmeter.loading.timer,)}</stringProp>
+                </ConstantTimer>
+                <hashTree/>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Valid File - Query LOADING HEADER table" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;PK_ID&quot;, &quot;InvoiceNumber&quot;, &quot;STATUS&quot;, &quot;CORID&quot;
+ FROM ${__P(ar.schema)}.${__P(ar.header.loading)}
+  WHERE &quot;TRANSMISSION_ID&quot; LIKE &apos;${transmission_id1}&apos;
+ ;</stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">loading_result1</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Valid File - Verify Status - Loading_Header" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;***************Loading_Header_result (Valid File)*********************&quot;)
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+def ResultMap = new HashMap()
+
+def InvoiceMap2 = props.get(&quot;InvoiceMap1&quot;)
+InvoiceMap2.each{
+  ResultMap.put(it.key.replaceAll(&quot;\&quot;&quot;, &quot;&quot;),it.value.replaceAll(&quot;\&quot;&quot;, &quot;&quot;))
+}
+
+if(vars.getObject(&quot;loading_result1&quot;).size() == 0){
+	log.info(&quot;File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id1} in Loading Header table&quot;)
+	//ResultMap.put(&quot;InvoiceCountLoadingHeader&quot;,&quot;None&quot;)
+	vars.put(&quot;InvoiceCountLoadingHeader&quot;, &quot;None&quot;)
+}
+
+else{
+	if (vars.getObject(&quot;loading_result1&quot;).size()!=vars.get(&quot;InvoiceCount&quot;).toInteger()){
+		def aa = &quot;Invoice count in loading header [ &quot;+vars.getObject(&quot;loading_result1&quot;).size().toString()+&quot; ] does not match with invoice count in uploaded file [&quot;+vars.get(&quot;InvoiceCount&quot;).toString()+&quot; ]&quot;		
+		log.info(aa);
+		//ResultMap.put(&quot;InvoiceCountLoadingHeader&quot;,aa)
+		vars.put(&quot;InvoiceCountLoadingHeader&quot;, aa)
+		
+	}else{
+		def aa1 = &quot;Invoice count in loading header [ &quot;+vars.getObject(&quot;loading_result1&quot;).size().toString()+&quot; ] matched with invoice count in uploaded file [&quot;+vars.get(&quot;InvoiceCount&quot;).toString()+&quot; ]&quot;
+		log.info(aa1);
+		//ResultMap.put(&quot;InvoiceCountLoadingHeader&quot;,aa1)
+		vars.put(&quot;InvoiceCountLoadingHeader&quot;, aa1)
+		
+	}
+	for (i1=0; i1&lt;vars.get(&quot;InvoiceCount&quot;).toInteger(); i1++)
+	{
+		log.info(&quot;&quot;)
+		String PK_ID_Received_string = vars.getObject(&quot;loading_result1&quot;).get(i1).get(&quot;PK_ID&quot;);
+		log.info(&quot;PK_ID_Received is &quot;+ PK_ID_Received_string)
+
+		String InvoiceNumber_Received_string = vars.getObject(&quot;loading_result1&quot;).get(i1).get(&quot;InvoiceNumber&quot;);
+		log.info(&quot;InvoiceNumber_Received is &quot;+ InvoiceNumber_Received_string)
+
+		String STATUS_Received_string = vars.getObject(&quot;loading_result1&quot;).get(i1).get(&quot;STATUS&quot;);	 	
+		if(STATUS_Received_string.equals(&quot;DONE&quot;)){
+			log.info(&quot;Status matched as &quot;+STATUS_Received_string);
+		}
+		else
+		{
+			log.info(&quot;Status doesn&apos;t match, expected [ DONE ] but was [ &quot;+STATUS_Received_string+&quot; ]&quot;);
+			def STATUS_Received_string1 = &quot;Status doesn&apos;t match, expected [ DONE ] but was [ &quot;+STATUS_Received_string+&quot; ]&quot;
+			STATUS_Received_string = STATUS_Received_string1
+		}
+
+		String CORID_Received_string = vars.getObject(&quot;loading_result1&quot;).get(i1).get(&quot;CORID&quot;);
+		log.info(&quot;CORID_Received var is &quot;+ CORID_Received_string)
+		vars.put(&quot;CORID_Received&quot;, CORID_Received_string)
+		
+		ResultMap.put(InvoiceNumber_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;), PK_ID_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;))
+		ResultMap.put(PK_ID_Received_string, STATUS_Received_string)	
+	}	
+}
+log.info(&quot;********************************************&quot;)
+props.put(&quot;ResultMap1&quot;, ResultMap)</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Write Result Loading_Header" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;----------------------------Write Result Loading Header----------------------------------&quot;)
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+def ResultMap_Loading_Header = props.get(&quot;ResultMap1&quot;)
+//log.info(&quot;######&quot;)
+//ResultMap_Loading_Header.each{k, v -&gt; log.info(&quot;${k}:${v}&quot;)}
+//log.info(&quot;######&quot;)
+
+def Loading_Header_Scenario = &quot;Loading_Header_result (Valid File)&quot;
+def System_Name = vars.get(&quot;System_Name&quot;).toString()
+def System_Type = vars.get(&quot;System_Type&quot;).toString()
+def InvoiceCountLoadingHeader = vars.get(&quot;InvoiceCountLoadingHeader&quot;).toString()
+
+PrintWriter pw;
+pw = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/Loading_Header&quot;+props.get(&quot;sftp.filetype&quot;)));
+StringBuffer csvHeader = new StringBuffer(&quot;&quot;);
+StringBuffer csvData = new StringBuffer(&quot;&quot;);
+
+//----------------Getting all original invoice numbers---------------
+//log.info(props.get(&quot;InvoiceMap1&quot;).size().toString())
+def InvoiceKeys =[]
+def InvoiceKeyMap = props.get(&quot;InvoiceMap1&quot;)
+InvoiceKeyMap.each{
+    key, value -&gt; InvoiceKeys.add(key.replaceAll(&quot;\&quot;&quot;, &quot;&quot;));
+}
+for (i=0; i&lt;InvoiceKeys.size(); i++)
+{
+	log.info(InvoiceKeys[i])
+}
+
+//------------Writing to csv result file-------------------------
+if (InvoiceCountLoadingHeader!=&quot;None&quot;)
+{
+	csvHeader.append(&quot;System Name, System Type, Scenario Name, InvoiceCount, Original Invoice Number, New Invoice Number, CORID, PK_ID, Status\n&quot;);
+	pw.write(csvHeader.toString());
+	for (i1=0; i1&lt;(vars.getObject(&quot;InvoiceCount&quot;).toInteger()); i1++)
+	{
+		csvData.append(System_Name);
+		csvData.append(&apos;,&apos;);
+		csvData.append(System_Type);
+		csvData.append(&apos;,&apos;);
+		csvData.append(Loading_Header_Scenario);
+		csvData.append(&apos;,&apos;);
+		csvData.append(InvoiceCountLoadingHeader);
+		csvData.append(&apos;,&apos;);
+		csvData.append(InvoiceKeys[i1]);
+		csvData.append(&apos;,&apos;);
+		csvData.append(ResultMap_Loading_Header[InvoiceKeys[i1]]);
+		csvData.append(&apos;,&apos;);
+		csvData.append(vars.get(&quot;CORID_Received&quot;).toString());
+		csvData.append(&apos;,&apos;);
+		def aa = ResultMap_Loading_Header[InvoiceKeys[i1]];
+		csvData.append(ResultMap_Loading_Header[aa]);
+		csvData.append(&apos;,&apos;);
+		def ab = ResultMap_Loading_Header[aa];
+		csvData.append(ResultMap_Loading_Header[ab]);
+		csvData.append(&apos;\n&apos;);
+	}
+}
+else{
+	csvHeader.append(&quot;System Name, System Type, Scenario Name, Error\n&quot;);
+	pw.write(csvHeader.toString());
+	csvData.append(System_Name);
+	csvData.append(&apos;,&apos;);
+	csvData.append(System_Type);
+	csvData.append(&apos;,&apos;);
+	csvData.append(Loading_Header_Scenario);
+	csvData.append(&apos;,&apos;);
+	csvData.append(&quot;File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id1} in Loading Header table&quot;);
+	
+}
+pw.write(csvData.toString());
+pw.close();</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Write2" enabled="false">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">import groovy.json.*
+//log.info(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(vars.getObject(&quot;loading_result1&quot;))))   
+def json = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(vars.getObject(&quot;loading_result1&quot;)))
+def js = &apos;{&quot;infile&quot;: &apos;+&quot;$json&quot;+&apos;}&apos;
+def data = new JsonSlurper().parseText( js ) 
+def columns = data.infile*.keySet().flatten().unique()
+def encode = { e -&gt; e == null ? &apos;&apos; : e instanceof String ? /&quot;$e&quot;/ : &quot;$e&quot; }
+log.info(columns.collect { c -&gt; encode( c ) }.join( &apos;,&apos; ))
+log.info(data.infile.collect { row -&gt;
+    // A row at a time
+    columns.collect { colName -&gt; encode( row[ colName ] ) }.join( &apos;,&apos; )
+}.join( &apos;\n&apos; ))</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Invalid File - Query HEADER LOADING table" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;PK_ID&quot;, &quot;InvoiceNumber&quot;, &quot;STATUS&quot;, &quot;CORID&quot;
+ FROM ${__P(ar.schema)}.${__P(ar.header.loading)}
+  WHERE &quot;TRANSMISSION_ID&quot; LIKE &apos;${transmission_id2}&apos;
+ ;</stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">loading_result2</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Invalid File - Verify Status - Loading_Header" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;&quot;)
+log.info(&quot;***************Loading_Header_result (Invalid File)*********************&quot;)
+
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+log.info(vars.get(&quot;System_Name&quot;).toString())
+log.info(vars.get(&quot;System_Type&quot;).toString())
+
+if(vars.getObject(&quot;loading_result2&quot;).size() == 0){
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id2} **&quot;)
+}else{
+	//log.info(vars.getObject(&quot;loading_result&quot;).size().toString())
+	//log.info(&quot;${loading_result}&quot;)
+	if (vars.getObject(&quot;loading_result2&quot;).size()!=vars.get(&quot;InvoiceCount&quot;)){
+		log.info(&quot;Invoice count in DB [ &quot;+vars.getObject(&quot;loading_result2&quot;).size().toString()+&quot; ] does not match with invoice count in uploaded file [&quot;+vars.getObject(&quot;RowCount&quot;).toString()+&quot; ]&quot;);
+	}
+	for (i1=0; i1&lt;vars.getObject(&quot;loading_result2&quot;).size(); i1++)
+	{
+		log.info(&quot;&quot;)
+		String PK_ID_Received_string = vars.getObject(&quot;loading_result2&quot;).get(i1).get(&quot;PK_ID&quot;);
+	 	vars.put(&quot;PK_ID_Received&quot;, PK_ID_Received_string)
+		log.info(&quot;PK_ID_Received var is &quot;+ vars.get(&quot;PK_ID_Received&quot;))
+
+		String STATUS_Received_string = vars.getObject(&quot;loading_result2&quot;).get(i1).get(&quot;STATUS&quot;);
+	 	vars.put(&quot;STATUS_Received&quot;, STATUS_Received_string)
+		log.info(&quot;STATUS_Received var is &quot;+ vars.get(&quot;STATUS_Received&quot;))
+		if(STATUS_Received_string.equals(&quot;ERROR&quot;)){
+			log.info(&quot;Status matched as &quot;+STATUS_Received_string);
+		}
+		else
+		{
+			log.info(&quot;Status doesn&apos;t match, expected ERROR but was [ &quot;+STATUS_Received_string+&quot; ] for transmission_id: &quot;+&quot;${transmission_id2}&quot;);
+		}
+	}	
+}
+log.info(&quot;********************************************&quot;)
+
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If lineLoadingTableCheck is True" enabled="true">
+                <stringProp name="IfController.condition">${__javaScript(&quot;${__P(Loading_line.connection,)}&quot; == &quot;true&quot;)}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+              </IfController>
+              <hashTree>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Valid File - Query LOADING LINE table" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;PK_ID&quot;, &quot;HEADER_ID&quot;
+ FROM ${__P(ar.schema)}.${__P(ar.line.loading)}
+  WHERE &quot;CORID&quot; LIKE &apos;${CORID_Received}&apos;
+ ;</stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">Loading_Line_result1</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Valid File - Verify Status - Loading_Line" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;***************Loading_Line_result (Valid File)*******************&quot;)
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+def ResultMapLoading_Line = new HashMap()
+
+if(vars.getObject(&quot;Loading_Line_result1&quot;).size() == 0){
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id1} **&quot;)
+	vars.put(&quot;InvoiceCountLoadingLine&quot;, &quot;None&quot;)
+}
+else{
+	log.info(vars.getObject(&quot;Loading_Line_result1&quot;).size().toString())
+	
+	if (vars.getObject(&quot;Loading_Line_result1&quot;).size().toInteger()!=vars.getObject(&quot;RowCount&quot;).toInteger()){
+		def aa = &quot;Invoice count in loading line [ &quot;+vars.getObject(&quot;Loading_Line_result1&quot;).size().toString()+&quot; ] does not match with invoice count in uploaded file [ &quot;+vars.getObject(&quot;RowCount&quot;).toString()+&quot; ]&quot;
+		log.info(aa);
+		vars.put(&quot;InvoiceCountLoadingLine&quot;, aa)
+	}
+	else{
+		def aa1 = &quot;Invoice count in loading line [ &quot;+vars.getObject(&quot;Loading_Line_result1&quot;).size().toString()+&quot; ] matched with invoice count in uploaded file [ &quot;+vars.getObject(&quot;RowCount&quot;).toString()+&quot; ]&quot;
+		log.info(aa1);
+		vars.put(&quot;InvoiceCountLoadingLine&quot;, aa1)
+	}
+
+	for (i1=0; i1&lt;vars.getObject(&quot;RowCount&quot;).toInteger(); i1++)
+	{
+		log.info(&quot;&quot;)
+		String PK_ID_Received_string = vars.getObject(&quot;Loading_Line_result1&quot;).get(i1).get(&quot;PK_ID&quot;);
+		log.info(&quot;PK_ID_Received is &quot;+ PK_ID_Received_string)
+
+		String HEADER_ID_Received_string = vars.getObject(&quot;Loading_Line_result1&quot;).get(i1).get(&quot;HEADER_ID&quot;);
+		log.info(&quot;HEADER_ID_Received is &quot;+ HEADER_ID_Received_string)
+		
+		ResultMapLoading_Line.put(PK_ID_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;), HEADER_ID_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;))	
+	}
+}
+log.info(&quot;********************************************&quot;)
+props.put(&quot;ResultMapLoading_Line1&quot;, ResultMapLoading_Line)
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Write Result Loading_Line" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;-----------------------Write Result Loading Line-----------------------------------&quot;)
+def ResultMapLoading_Line2 = props.get(&quot;ResultMapLoading_Line1&quot;)
+
+def System_Name = vars.get(&quot;System_Name&quot;).toString()
+def System_Type = vars.get(&quot;System_Type&quot;).toString()
+def Loading_Line_Scenario = &quot;Loading_Line_result (Valid File)&quot;
+def InvoiceCountLoadingLine = vars.get(&quot;InvoiceCountLoadingLine&quot;).toString()
+
+def PKIDKeys =[]
+ResultMapLoading_Line2.each{
+    key, value -&gt; PKIDKeys.add(key.replaceAll(&quot;\&quot;&quot;, &quot;&quot;));
+}
+
+log.info(vars.getObject(&quot;RowCount&quot;).toString())
+
+PrintWriter pw1;
+pw1 = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/Loading_Line&quot;+props.get(&quot;sftp.filetype&quot;)));
+StringBuffer csvHeader1 = new StringBuffer(&quot;&quot;);
+StringBuffer csvData1 = new StringBuffer(&quot;&quot;);
+
+csvHeader1.append(&quot;System Name, System Type, Scenario Name, InvoiceCount, PK_ID, HEADER_ID\n&quot;);
+pw1.write(csvHeader1.toString());
+
+for (i1=0; i1&lt;(vars.getObject(&quot;RowCount&quot;).toInteger()); i1++)
+{
+	csvData1.append(System_Name);
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(System_Type);
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(Loading_Line_Scenario);
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(InvoiceCountLoadingLine);
+	
+	try{
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(PKIDKeys[i1]);
+	}catch(Exception e1){
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(&quot;Error&quot;)	
+	}
+	try{
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(ResultMapLoading_Line2[PKIDKeys[i1]]);
+	}catch(Exception e2){
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(&quot;Error&quot;)		
+	}
+	csvData1.append(&apos;\n&apos;);
+	
+}
+pw1.write(csvData1.toString());
+pw1.close();</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Invalid File - Loading_LINE" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;STATUS_EXT_INFO&quot; FROM ${__P(ar.schema)}.${__P(ar.line.loading)} line
+   JOIN  ${__P(ar.schema)}.${__P(ar.header.loading)} header
+   ON header.&quot;PK_ID&quot; = line.&quot;HEADER_ID&quot;
+  WHERE &quot;TRANSMISSION_ID&quot; like &apos;${transmission_id2}&apos;;
+ </stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">Loading_Line_result2</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Verify STATUS_EXT_INFO - Loading_Line" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;&quot;)
+log.info(&quot;***************Loading_Line_result (Invalid File)*******************&quot;)
+if(vars.getObject(&quot;Loading_Line_result2&quot;).size() == 0){
+	//log.info(&quot;Inside size = 0&quot;)
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id2} **&quot;)
+}else{
+	//log.info(&quot;Inside size more than 0&quot;)
+	//log.info(&quot;${Loading_Line_result}&quot;)
+	//log.info(vars.getObject(&quot;loading_result&quot;).size().toString())
+	String STATUS_EXT_INFO_Received_string = vars.getObject(&quot;Loading_Line_result2&quot;).get(0).get(&quot;STATUS_EXT_INFO&quot;);
+ 	log.info(STATUS_EXT_INFO_Received_string);
+ 	def Valid_Info = &quot;PROCESSED&quot;
+ 	def Invalid_Info = &quot;ERROR&quot;
+	if(STATUS_EXT_INFO_Received_string.equals(Invalid_Info)){
+	log.info(&quot;STATUS_EXT_INFO matched as &quot;+STATUS_EXT_INFO_Received_string);
+	}
+	else
+	{
+		log.info(&quot;STATUS_EXT_INFO doesn&apos;t match, expected ERROR but was [ &quot;+STATUS_EXT_INFO_Received_string+&quot; ] for transmission_id: &quot;+&quot;${transmission_id2}&quot;);
+	}
+}
+log.info(&quot;********************************************&quot;)
+
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Staging Controller" enabled="true"/>
+            <hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If headerStagingTableCheck is True" enabled="true">
+                <stringProp name="IfController.condition">${__javaScript(&quot;${__P(Staging_header.connection,)}&quot; == &quot;true&quot;)}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+              </IfController>
+              <hashTree>
+                <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Loading timer" enabled="true">
+                  <stringProp name="ConstantTimer.delay">${__P(jmeter.staging.timer,)}</stringProp>
+                </ConstantTimer>
+                <hashTree/>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Valid File - Query HEADER STAGING table" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;InvoiceNumber&quot;, &quot;PK_ID&quot;, &quot;STATUS&quot;,  &quot;STATUS_EXT_INFO&quot;, &quot;CORID&quot;
+ FROM ${__P(ar.schema)}.${__P(ar.header.staging)}
+  WHERE &quot;TRANSMISSION_ID&quot; LIKE &apos;${transmission_id1}&apos;
+ ;</stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">staging_result1</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Valid File - Verify Status - Staging_Header" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;***************Staging_Header_result (Valid File)*********************&quot;)
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+def ResultMapStaging_Header = new HashMap()
+
+def InvoiceMap2 = props.get(&quot;InvoiceMap1&quot;)
+InvoiceMap2.each{
+  ResultMapStaging_Header.put(it.key.replaceAll(&quot;\&quot;&quot;, &quot;&quot;),it.value.replaceAll(&quot;\&quot;&quot;, &quot;&quot;))
+}
+
+//def InvoiceMapStaging_Header = props.get(&quot;InvoiceMap1&quot;)
+//props.get(&quot;InvoiceMap1&quot;).each{k, v -&gt; log.info(&quot;${k}:${v}&quot;)}
+
+if(vars.getObject(&quot;staging_result1&quot;).size() == 0){
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id1} **&quot;)
+	vars.put(&quot;InvoiceCountStagingHeader&quot;, &quot;None&quot;)
+}
+else{
+	if (vars.getObject(&quot;staging_result1&quot;).size()!=props.get(&quot;InvoiceMap1&quot;).size()){
+		def aa = &quot;Invoice count in staging header [ &quot;+vars.getObject(&quot;staging_result1&quot;).size().toString()+&quot; ] does not match with invoice count in uploaded file [&quot;+props.get(&quot;InvoiceMap1&quot;).size().toString()+&quot; ]&quot;
+		log.info(aa);
+		vars.put(&quot;InvoiceCountStagingHeader&quot;, aa)
+	
+	}
+	else{
+		def aa1 = &quot;Invoice count in staging header [ &quot;+vars.getObject(&quot;staging_result1&quot;).size().toString()+&quot; ] matched with invoice count in uploaded file [&quot;+props.get(&quot;InvoiceMap1&quot;).size().toString()+&quot; ]&quot;
+		log.info(aa1);		
+		vars.put(&quot;InvoiceCountStagingHeader&quot;, aa1)
+	}
+	
+	for (i1=0; i1&lt;vars.get(&quot;InvoiceCount&quot;).toInteger(); i1++)
+	{
+		log.info(&quot;&quot;)
+		String PK_ID_Received_string = vars.getObject(&quot;staging_result1&quot;).get(i1).get(&quot;PK_ID&quot;);
+		log.info(&quot;PK_ID_Received is &quot;+ PK_ID_Received_string)
+
+		String InvoiceNumber_Received_string = vars.getObject(&quot;staging_result1&quot;).get(i1).get(&quot;InvoiceNumber&quot;);
+		log.info(&quot;InvoiceNumber_Received is &quot;+ InvoiceNumber_Received_string)
+
+		String STATUS_Received_string = vars.getObject(&quot;staging_result1&quot;).get(i1).get(&quot;STATUS&quot;);	 	
+		if(STATUS_Received_string.equals(&quot;SUCCEEDED&quot;)){
+			log.info(&quot;Status matched as &quot;+STATUS_Received_string);
+		}
+		else
+		{
+			log.info(&quot;Status doesn&apos;t match, expected [ SUCCEEDED ] but was [ &quot;+STATUS_Received_string+&quot; ]&quot;);
+			def STATUS_Received_string1 = &quot;Status doesn&apos;t match expected [ SUCCEEDED ] but was [ &quot;+STATUS_Received_string+&quot; ]&quot;
+			STATUS_Received_string = STATUS_Received_string1
+		}
+
+		String STATUS_EXT_INFO_Received_string = vars.getObject(&quot;staging_result1&quot;).get(i1).get(&quot;STATUS_EXT_INFO&quot;);
+		log.info(&quot;STATUS_EXT_INFO_Received_string var is &quot;+ STATUS_EXT_INFO_Received_string)
+		
+		String CORID_Received_string = vars.getObject(&quot;staging_result1&quot;).get(i1).get(&quot;CORID&quot;);
+		log.info(&quot;CORID_Received is &quot;+ CORID_Received_string)
+		vars.put(&quot;CORID_Received_Staging_Header&quot;, CORID_Received_string)
+		
+		ResultMapStaging_Header.put(InvoiceNumber_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;), PK_ID_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;))
+		ResultMapStaging_Header.put(PK_ID_Received_string, STATUS_Received_string)
+		def Un=InvoiceNumber_Received_string+PK_ID_Received_string
+		ResultMapStaging_Header.put(Un, STATUS_EXT_INFO_Received_string)
+	}	
+}
+log.info(&quot;********************************************&quot;)
+props.put(&quot;ResultMapStaging_Header1&quot;, ResultMapStaging_Header)
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Write Result Loading_Header 222" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;----------------------------Write Result Staging Header----------------------------------&quot;)
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+def ResultMap_Staging_Header = props.get(&quot;ResultMapStaging_Header1&quot;)
+//log.info(&quot;######&quot;)
+//ResultMap_Staging_Header.each{k, v -&gt; log.info(&quot;${k}:${v}&quot;)}
+//log.info(&quot;######&quot;)
+
+def Staging_Header_Scenario = &quot;Staging_Header_result (Valid File)&quot;
+def System_Name = vars.get(&quot;System_Name&quot;).toString()
+def System_Type = vars.get(&quot;System_Type&quot;).toString()
+def InvoiceCountLoadingHeader = vars.get(&quot;InvoiceCountStagingHeader&quot;).toString()
+
+PrintWriter pw;
+pw = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/Staging_Header&quot;+props.get(&quot;sftp.filetype&quot;)));
+StringBuffer csvHeader = new StringBuffer(&quot;&quot;);
+StringBuffer csvData = new StringBuffer(&quot;&quot;);
+
+//----------------Getting all original invoice numbers---------------
+//log.info(props.get(&quot;InvoiceMap1&quot;).size().toString())
+def InvoiceKeys =[]
+def InvoiceKeyMap = props.get(&quot;InvoiceMap1&quot;)
+InvoiceKeyMap.each{
+    key, value -&gt; InvoiceKeys.add(key.replaceAll(&quot;\&quot;&quot;, &quot;&quot;));
+}
+for (i=0; i&lt;InvoiceKeys.size(); i++)
+{
+	log.info(InvoiceKeys[i])
+}
+
+//------------Writing to csv result file-------------------------
+if (InvoiceCountLoadingHeader!=&quot;None&quot;)
+{
+	csvHeader.append(&quot;System Name, System Type, Scenario Name, InvoiceCount, Original Invoice Number, New Invoice Number, CORID, PK_ID, Status, STATUS_EXT_INFO\n&quot;);
+	pw.write(csvHeader.toString());
+	for (i1=0; i1&lt;(vars.getObject(&quot;InvoiceCount&quot;).toInteger()); i1++)
+	{
+		csvData.append(System_Name);
+		csvData.append(&apos;,&apos;);
+		csvData.append(System_Type);
+		csvData.append(&apos;,&apos;);
+		csvData.append(Staging_Header_Scenario);
+		csvData.append(&apos;,&apos;);
+		csvData.append(InvoiceCountLoadingHeader);
+		csvData.append(&apos;,&apos;);
+		csvData.append(InvoiceKeys[i1]);
+		csvData.append(&apos;,&apos;);
+		csvData.append(ResultMap_Staging_Header[InvoiceKeys[i1]]);
+		csvData.append(&apos;,&apos;);
+		csvData.append(vars.get(&quot;CORID_Received_Staging_Header&quot;).toString());
+		csvData.append(&apos;,&apos;);
+		def aa = ResultMap_Staging_Header[InvoiceKeys[i1]];
+		csvData.append(ResultMap_Staging_Header[aa]);
+		csvData.append(&apos;,&apos;);
+		def ab = ResultMap_Staging_Header[aa];
+		csvData.append(ResultMap_Staging_Header[ab]);
+		csvData.append(&apos;,&apos;);
+		def ac =aa+ResultMap_Staging_Header[aa]
+		csvData.append(ResultMap_Staging_Header[ac]);
+		csvData.append(&apos;\n&apos;);
+	}
+}
+else{
+	csvHeader.append(&quot;System Name, System Type, Scenario Name, Error\n&quot;);
+	pw.write(csvHeader.toString());
+	csvData.append(System_Name);
+	csvData.append(&apos;,&apos;);
+	csvData.append(System_Type);
+	csvData.append(&apos;,&apos;);
+	csvData.append(Staging_Header_Scenario);
+	csvData.append(&apos;,&apos;);
+	csvData.append(&quot;File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id1} in Staging Header table&quot;);
+	
+}
+pw.write(csvData.toString());
+pw.close();</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Invalid File - Query HEADER STAGING table" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;STATUS&quot; , &quot;PK_ID&quot;
+ FROM ${__P(ar.schema)}.${__P(ar.header.staging)}
+  WHERE &quot;TRANSMISSION_ID&quot; LIKE &apos;${transmission_id2}&apos;
+ ;</stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">staging_result2</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Invalid File - Verify Status - Loading_Header" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;&quot;)
+log.info(&quot;***************Staging_Header_result (Invalid File)*********************&quot;)
+if(vars.getObject(&quot;staging_result2&quot;).size() == 0){
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id2} **&quot;)
+}else{
+	//log.info(vars.getObject(&quot;loading_result&quot;).size().toString())
+	//log.info(&quot;${loading_result}&quot;)
+	if (vars.getObject(&quot;staging_result2&quot;).size()!=vars.getObject(&quot;RowCount&quot;)){
+		log.info(&quot;Invoice count in DB [ &quot;+vars.getObject(&quot;staging_result2&quot;).size().toString()+&quot; ] does not match with invoice count in uploaded file [&quot;+vars.getObject(&quot;RowCount&quot;).toString()+&quot; ]&quot;);
+	}
+	for (i1=0; i1&lt;vars.getObject(&quot;staging_result2&quot;).size(); i1++)
+	{
+		log.info(&quot;&quot;)
+		String PK_ID_Received_string = vars.getObject(&quot;staging_result2&quot;).get(i1).get(&quot;PK_ID&quot;);
+	 	vars.put(&quot;PK_ID_Received&quot;, PK_ID_Received_string)
+		log.info(&quot;PK_ID_Received var is &quot;+ vars.get(&quot;PK_ID_Received&quot;))
+
+		String STATUS_Received_string = vars.getObject(&quot;staging_result2&quot;).get(i1).get(&quot;STATUS&quot;);
+	 	vars.put(&quot;STATUS_Received&quot;, STATUS_Received_string)
+		log.info(&quot;STATUS_Received var is &quot;+ vars.get(&quot;STATUS_Received&quot;))
+		if(STATUS_Received_string.equals(&quot;ERROR&quot;)){
+			log.info(&quot;Status matched as &quot;+STATUS_Received_string);
+		}
+		else
+		{
+			log.info(&quot;Status doesn&apos;t match, expected ERROR but was [ &quot;+STATUS_Received_string+&quot; ] for transmission_id: &quot;+&quot;${transmission_id2}&quot;);
+		}
+	}	
+}
+log.info(&quot;********************************************&quot;)
+
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If lineStagingTableCheck is True" enabled="true">
+                <stringProp name="IfController.condition">${__javaScript(&quot;${__P(Staging_line.connection,)}&quot; == &quot;true&quot;)}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+              </IfController>
+              <hashTree>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Valid File - Staging_LINE" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;PK_ID&quot;, &quot;HEADER_ID&quot;
+ FROM ${__P(ar.schema)}.${__P(ar.line.staging)}
+  WHERE &quot;CORID&quot; LIKE &apos;${CORID_Received_Staging_Header}&apos;
+  ;
+ </stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">Staging_Line_result1</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Valid File - Verify Status - Staging_Line" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;***************Staging_Line_result (Valid File)*******************&quot;)
+log.info(vars.get(&quot;RowCount&quot;).toString())
+log.info(vars.get(&quot;InvoiceCount&quot;).toString())
+
+def ResultMapStaging_Line = new HashMap()
+
+if(vars.getObject(&quot;Staging_Line_result1&quot;).size() == 0){
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id1} **&quot;)
+	vars.put(&quot;InvoiceCountStagingLine&quot;, &quot;None&quot;)
+}
+else{
+	log.info(vars.getObject(&quot;Staging_Line_result1&quot;).size().toString())
+	
+	if (vars.getObject(&quot;Staging_Line_result1&quot;).size().toInteger()!=vars.getObject(&quot;RowCount&quot;).toInteger()){
+		def aa = &quot;Invoice count in staging line [ &quot;+vars.getObject(&quot;Staging_Line_result1&quot;).size().toString()+&quot; ] does not match with invoice count in uploaded file [ &quot;+vars.getObject(&quot;RowCount&quot;).toString()+&quot; ]&quot;
+		log.info(aa);
+		vars.put(&quot;InvoiceCountStagingLine&quot;, aa)
+	}
+	else{
+		def aa1 = &quot;Invoice count in staging line [ &quot;+vars.getObject(&quot;Loading_Line_result1&quot;).size().toString()+&quot; ] matched with invoice count in uploaded file [ &quot;+vars.getObject(&quot;RowCount&quot;).toString()+&quot; ]&quot;
+		log.info(aa1);
+		vars.put(&quot;InvoiceCountStagingLine&quot;, aa1)
+	}
+
+	for (i1=0; i1&lt;vars.getObject(&quot;RowCount&quot;).toInteger(); i1++)
+	{
+		log.info(&quot;&quot;)
+		String PK_ID_Received_string = vars.getObject(&quot;Staging_Line_result1&quot;).get(i1).get(&quot;PK_ID&quot;);
+		log.info(&quot;PK_ID_Received is &quot;+ PK_ID_Received_string)
+
+		String HEADER_ID_Received_string = vars.getObject(&quot;Staging_Line_result1&quot;).get(i1).get(&quot;HEADER_ID&quot;);
+		log.info(&quot;HEADER_ID_Received is &quot;+ HEADER_ID_Received_string)
+		
+		ResultMapStaging_Line.put(PK_ID_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;), HEADER_ID_Received_string.replaceAll(&quot;\&quot;&quot;, &quot;&quot;))	
+	}
+}
+log.info(&quot;********************************************&quot;)
+props.put(&quot;ResultMapStaging_Line1&quot;, ResultMapStaging_Line)
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Write Result Staging_Line" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;-----------------------Writing Result Staging Line-----------------------------------&quot;)
+def ResultMapStaging_Line2 = props.get(&quot;ResultMapStaging_Line1&quot;)
+
+def System_Name = vars.get(&quot;System_Name&quot;).toString()
+def System_Type = vars.get(&quot;System_Type&quot;).toString()
+def Staging_Line_Scenario = &quot;Staging_Line_result (Valid File)&quot;
+def InvoiceCountStagingLine = vars.get(&quot;InvoiceCountStagingLine&quot;).toString()
+
+def PKIDKeys =[]
+ResultMapStaging_Line2.each{
+    key, value -&gt; PKIDKeys.add(key.replaceAll(&quot;\&quot;&quot;, &quot;&quot;));
+}
+
+log.info(vars.getObject(&quot;RowCount&quot;).toString())
+
+PrintWriter pw1;
+pw1 = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/Staging_Line&quot;+props.get(&quot;sftp.filetype&quot;)));
+StringBuffer csvHeader1 = new StringBuffer(&quot;&quot;);
+StringBuffer csvData1 = new StringBuffer(&quot;&quot;);
+
+csvHeader1.append(&quot;System Name, System Type, Scenario Name, InvoiceCount, PK_ID, HEADER_ID\n&quot;);
+pw1.write(csvHeader1.toString());
+
+for (i1=0; i1&lt;(vars.getObject(&quot;RowCount&quot;).toInteger()); i1++)
+{
+	csvData1.append(System_Name);
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(System_Type);
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(Staging_Line_Scenario);
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(InvoiceCountStagingLine);
+	
+	try{
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(PKIDKeys[i1]);
+	}catch(Exception e1){
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(&quot;Error&quot;)	
+	}
+	try{
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(ResultMapStaging_Line2[PKIDKeys[i1]]);
+	}catch(Exception e2){
+	csvData1.append(&apos;,&apos;);
+	csvData1.append(&quot;Error&quot;)		
+	}
+	csvData1.append(&apos;\n&apos;);
+	
+}
+pw1.write(csvData1.toString());
+pw1.close();</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="Invalid File - Staging_LINE" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="query">SELECT &quot;STATUS_EXT_INFO&quot; FROM ${__P(ar.schema)}.${__P(ar.line.staging)} line
+   JOIN  ${__P(ar.schema)}.${__P(ar.header.staging)} header
+   ON header.&quot;PK_ID&quot; = line.&quot;HEADER_ID&quot;
+  WHERE &quot;TRANSMISSION_ID&quot; like &apos;${transmission_id2}&apos;;
+ </stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultVariable">Staging_Line_result2</stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Verify STATUS_EXT_INFO - Loading_Line" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;&quot;)
+log.info(&quot;***************Staging_Line_result (Invalid File)*******************&quot;)
+if(vars.getObject(&quot;Staging_Line_result2&quot;).size() == 0){
+	//log.info(&quot;Inside size = 0&quot;)
+	log.info(&quot;** File was added to SFTP but no record found for transmission_id: &quot;+&quot;${transmission_id2} **&quot;)
+}else{
+	//log.info(&quot;Inside size more than 0&quot;)
+	//log.info(&quot;${Staging_Line_result2}&quot;)
+	//log.info(vars.getObject(&quot;loading_result&quot;).size().toString())
+	String STATUS_EXT_INFO_Received_string = vars.getObject(&quot;Staging_Line_result2&quot;).get(0).get(&quot;STATUS_EXT_INFO&quot;);
+ 	log.info(STATUS_EXT_INFO_Received_string);
+ 	def Valid_Info = &quot;PROCESSED&quot;
+ 	def Invalid_Info = &quot;ERROR&quot;
+	if(STATUS_EXT_INFO_Received_string.equals(Invalid_Info)){
+	log.info(&quot;STATUS_EXT_INFO matched as &quot;+STATUS_EXT_INFO_Received_string);
+	}
+	else
+	{
+		log.info(&quot;STATUS_EXT_INFO doesn&apos;t match, expected ERROR but was [ &quot;+STATUS_EXT_INFO_Received_string+&quot; ] for transmission_id: &quot;+&quot;${transmission_id2}&quot;);
+	}
+}
+log.info(&quot;********************************************&quot;)
+
+</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+            </hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="workqueue Controller" enabled="true"/>
+            <hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Workqueue Table Check is True" enabled="true">
+                <stringProp name="IfController.condition">${__javaScript(&quot;${__P(Workqueue.connection,)}&quot; == &quot;true&quot;)}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+              </IfController>
+              <hashTree>
+                <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+                  <stringProp name="ConstantTimer.delay">15000</stringProp>
+                </ConstantTimer>
+                <hashTree/>
+                <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="check workqueue status" enabled="true">
+                  <stringProp name="dataSource">dbConnection</stringProp>
+                  <stringProp name="queryType">Select Statement</stringProp>
+                  <stringProp name="query">select &quot;TRANSMISSION_ID&quot;, &quot;STATUS&quot;,&quot;Phase&quot;,&quot;SourceSystem&quot;,&quot;RecordType&quot;,&quot;time_inserted&quot;,&quot;time_change&quot; 
+from ${__P(wq_table_history,)}
+WHERE &quot;TRANSMISSION_ID&quot; like &apos;${transmission_id1}&apos;;</stringProp>
+                  <stringProp name="queryArguments"></stringProp>
+                  <stringProp name="queryArgumentsTypes"></stringProp>
+                  <stringProp name="variableNames"></stringProp>
+                  <stringProp name="resultVariable">workqueue_result</stringProp>
+                  <stringProp name="queryTimeout"></stringProp>
+                  <stringProp name="resultSetMaxRows"></stringProp>
+                  <stringProp name="resultSetHandler">Store as Object</stringProp>
+                </JDBCSampler>
+                <hashTree>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Valid File - Verify Status - Workqueue" enabled="true">
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="script">log.info(&quot;***************Workqueue_result (Valid File)*********************&quot;)
+
+if(vars.getObject(&quot;workqueue_result&quot;).size() == 0){
+	log.info(&quot;File was uploaded to Staging table but no record found for transmission_id: &quot;+&quot;${transmission_id1} in Workqueue table&quot;)
+	vars.put(&quot;InvoiceCountWorqueue&quot;, &quot;None&quot;)
+}
+
+else{
+	def aa = &quot;Record found for transmission_id: &quot;+&quot;${transmission_id1} in Workqueue table&quot;
+	log.info(aa)
+	vars.put(&quot;InvoiceCountWorqueue&quot;, aa)
+	log.info(&quot;&quot;)
+	String TRANSMISSION_ID_Received_string = vars.getObject(&quot;workqueue_result&quot;).get(0).get(&quot;TRANSMISSION_ID&quot;);
+	log.info(&quot;TRANSMISSION_ID_Received is &quot;+ TRANSMISSION_ID_Received_string)
+
+	String STATUS_Received_string = vars.getObject(&quot;workqueue_result&quot;).get(0).get(&quot;STATUS&quot;);
+	log.info(&quot;STATUS_Received var is &quot;+ STATUS_Received_string)
+
+	String Phase_Received_string = vars.getObject(&quot;workqueue_result&quot;).get(0).get(&quot;Phase&quot;);
+	log.info(&quot;Phase_Received var is &quot;+ Phase_Received_string)
+
+	String SourceSystem_Received_string = vars.getObject(&quot;workqueue_result&quot;).get(0).get(&quot;SourceSystem&quot;);
+	log.info(&quot;SourceSystem_Received var is &quot;+ SourceSystem_Received_string)
+
+	String RecordType_Received_string = vars.getObject(&quot;workqueue_result&quot;).get(0).get(&quot;RecordType&quot;);
+	log.info(&quot;RecordType_Received var is &quot;+ RecordType_Received_string)
+
+	PrintWriter pw;
+	pw = new PrintWriter(new File(&quot;${VAR_SPLIT_PATH}/TestResult/Workqueue&quot;+props.get(&quot;sftp.filetype&quot;)));
+	StringBuffer csvHeader = new StringBuffer(&quot;&quot;);
+	StringBuffer csvData = new StringBuffer(&quot;&quot;);
+
+	csvHeader.append(&quot;System Name, System Type, TRANSMISSION_ID, Status, Phase\n&quot;);
+	pw.write(csvHeader.toString());
+
+	csvData.append(SourceSystem_Received_string);
+	csvData.append(&apos;,&apos;);
+	csvData.append(RecordType_Received_string);
+	csvData.append(&apos;,&apos;);
+	csvData.append(TRANSMISSION_ID_Received_string);
+	csvData.append(&apos;,&apos;);
+	csvData.append(STATUS_Received_string);
+	csvData.append(&apos;,&apos;);
+	csvData.append(Phase_Received_string);
+	csvData.append(&apos;\n&apos;);
+
+	pw.write(csvData.toString());
+	pw.close();
+}
+log.info(&quot;********************************************&quot;)</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                      <name>saveConfig</name>
+                      <value class="SampleSaveConfiguration">
+                        <time>true</time>
+                        <latency>true</latency>
+                        <timestamp>true</timestamp>
+                        <success>true</success>
+                        <label>true</label>
+                        <code>true</code>
+                        <message>true</message>
+                        <threadName>true</threadName>
+                        <dataType>true</dataType>
+                        <encoding>false</encoding>
+                        <assertions>true</assertions>
+                        <subresults>true</subresults>
+                        <responseData>false</responseData>
+                        <samplerData>false</samplerData>
+                        <xml>false</xml>
+                        <fieldNames>true</fieldNames>
+                        <responseHeaders>false</responseHeaders>
+                        <requestHeaders>false</requestHeaders>
+                        <responseDataOnError>false</responseDataOnError>
+                        <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                        <assertionsResultsToSave>0</assertionsResultsToSave>
+                        <bytes>true</bytes>
+                        <sentBytes>true</sentBytes>
+                        <url>true</url>
+                        <threadCounts>true</threadCounts>
+                        <idleTime>true</idleTime>
+                        <connectTime>true</connectTime>
+                      </value>
+                    </objProp>
+                    <stringProp name="filename"></stringProp>
+                  </ResultCollector>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
